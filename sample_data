@@ -1,0 +1,64 @@
+public function auth(Request $request)
+    {
+    
+        // $validated = $request->validate([
+        //     'account_no' => 'required|string',
+        //     'username'   => 'required|string',
+        //     'password'   => 'required|string',
+        // ]);
+
+        // $token = Str::random(60);
+
+        // try 
+        // {
+        //     $response = Http::post('https://neopay.dineshsoftware.in:546/areacode/payment/public', [
+        //         'account_no' => $validated['account_no'],
+        //         'username'   => $validated['username'],
+        //         'password'   => $validated['password'],
+        //     ]);
+
+        //     $externalResponse = $response->json();
+        // } 
+        // catch (\Exception $e) 
+        // {
+        //     return response()->json([
+        //         'status'  => 'error',
+        //         'message' => 'Failed to connect to external API',
+        //         'error'   => $e->getMessage(),
+        //     ], 500);
+        // }
+
+        // return response()->json([
+        //     'status'  => 'success',
+        //     'token'   => $token,
+        //     'data'    => $validated,
+        //     'external_api_response' => $externalResponse,
+        // ]);
+
+
+        // try 
+        // {
+        // $response = Http::withOptions([
+        // 'verify' => false, 
+        // 'timeout' => 30,
+        // ])->post('https://neopay.dineshsoftware.in:546/areacode/payment/public', $request->all());
+        // return response()->json($response->json(), $response->status());
+        // } 
+
+        // catch (\Exception $e) 
+        // {
+        // return response()->json([
+        // 'status'  => 'error',
+        // 'message' => 'Failed to connect to external API',
+        // 'error'   => $e->getMessage(),
+        // ], 500);
+        // }
+
+         $response = Http::post(
+        'https://neopay.dineshsoftware.in:546/areacode/payment/public',
+        $request->all()
+        );
+
+        return response()->json($response->json(), $response->status());
+
+    }
