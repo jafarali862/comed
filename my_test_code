@@ -1,0 +1,22 @@
+public function index(Request $request)
+    {   
+       
+        $medicines = Medicine::all();
+        $status = $request->input('status_filter', 0);
+
+
+        
+        $pharmacyPrescriptions = pprescription::with(['user', 'pharmacy'])
+        ->where('status', $status)
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
+
+
+        return view('backend.pharmacypres.index', compact('pharmacyPrescriptions','medicines','status'));
+    }
+
+
+
+
+
+
