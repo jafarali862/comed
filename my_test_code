@@ -44,6 +44,9 @@ $(document).ready(function () {
 
 
 
+ window.addEventListener("load", function() {
+    statusChecker(1);
+});
 
 
 
