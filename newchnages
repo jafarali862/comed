@@ -14,3 +14,12 @@
 
  <td>{{ \Carbon\Carbon::parse($prescription->scheduled_at)->format('d-m-Y') }}</td>
       
+    Route::get('/clinic-prescription/rejected/{id}', [ClinicPrescriptionController::class, 'rejected'])->name('clinic-prescription.rejected');
+
+public function rejected($id)
+    {
+        $cPrescriptions = ClinicPrescription::findOrFail($id);
+        $cPrescriptions->status=5;
+        $cPrescriptions->save();
+        return back();
+    }
