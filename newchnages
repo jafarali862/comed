@@ -1,0 +1,16 @@
+  
+  cLINICS PRESCRIPTION 
+
+  INDEX
+  clinicPresStatus
+  clinicPresDate
+  MODEL
+
+   $cPrescriptions = ClinicPrescription::where('status', '=', $query)->orderBy('scheduled_at', 'asc')->paginate(10);
+
+
+  <td>' . $prescription->user->phone_number. '</td>
+    <td>' . \Carbon\Carbon::parse($prescription->scheduled_at)->format('d-m-Y') . '</td>
+
+ <td>{{ \Carbon\Carbon::parse($prescription->scheduled_at)->format('d-m-Y') }}</td>
+      
