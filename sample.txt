@@ -1,0 +1,62 @@
+$pharmacies = Pharmacy::leftJoin('pharmacy_prescriptions as pp', 'pp.pharmacy_id', '=', 'pharmacies.id')
+    ->select(
+        'pharmacies.id as id',
+        'pharmacy_name',
+        'pharmacy_address',
+        'pharmacy_photo',
+        'pharmacies.city as city',
+        'pharmacies.email as email',
+        'pharmacies.phone_number as phone_number',
+        DB::raw("
+            MAX(
+                IF(
+                    pp.status = 1
+                    AND pp.user_id = $userId
+                    AND pp.receipt IS NOT NULL
+                    AND pp.receipt != ''
+                    AND pp.receipt = 1,
+                    1,
+                    0
+                )
+            ) as med_status
+        ")
+    )
+    ->groupBy(
+        'pharmacies.id',
+        'pharmacy_name',
+        'pharmacy_address',
+        'pharmacy_photo',
+        'pharmacies.city',
+        'pharmacies.email',
+        'pharmacies.phone_number'
+    )
+    ->distinct()
+    ->get();
+
+
+    return response()->json(['pharmacys' => $pharmacies]);
+
+
+
+if ($request->hasFile('receipt')) {
+    $file = $request->file('receipt');
+    $receiptPath = $file->store('receipts', 'public'); // store file in storage/app/public/receipts
+    $receiptValue = asset('storage/' . $receiptPath); // generate public URL
+} else {
+    $receiptValue = null; // if no file, set NULL
+}
+
+foreach ($prescriptions as $prescription) {
+    $prescription->update([
+        'status'      => 2,
+        'totlamount'  => $request->totlamount,
+        'receipt'     => $receiptValue, // file URL or NULL
+        'updated_at'  => now()
+    ]);
+}
+
+
+
+
+
+
