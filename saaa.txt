@@ -1,0 +1,35 @@
+<script>
+  function validatePhoneInput(input) {
+    // Remove any non-digit characters
+    const cleanedValue = input.value.replace(/[^0-9]/g, '');
+    if (input.value !== cleanedValue) {
+      // Show error message
+      document.getElementById('phoneError').style.display = 'block';
+      input.value = cleanedValue;
+    } else {
+      // Hide error message
+      document.getElementById('phoneError').style.display = 'none';
+    }
+  }
+</script>
+
+
+<div class="mb-3">
+    <label for="phone" class="form-label fw-bold">Contact Number <span class="text-danger">*</span></label>
+
+     <input type="text" 
+       class="form-control" 
+       id="phone" 
+       name="phone" 
+       value="{{ old('phone') }}"
+       placeholder="Enter contact number" 
+       required 
+       maxlength="15"
+       inputmode="numeric"
+       oninput="validatePhoneInput(this)"
+       >
+   
+   <div id="phoneError" class="text-danger mt-1" style="display:none;">
+       Please enter digits only (0-9).
+    </div>
+</div>
