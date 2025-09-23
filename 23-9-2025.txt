@@ -1,0 +1,104 @@
+
+
+list_templates.blade.php
+
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            
+            <!-- Header -->
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Template Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Body -->
+            <div class="modal-body" id="previewContent">
+                <!-- Preview content loaded dynamically -->
+            </div>
+            
+            <!-- Footer -->
+            <!-- <div class="modal-footer">
+                <a id="downloadPdfBtn" href="#" class="btn btn-danger">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div> -->
+
+            <div class="modal-footer">
+    <a id="downloadPdfBtn" href="{{ route('templates.download_pdf', $template->id ?? 0) }}" 
+       class="btn btn-danger">
+        <i class="fas fa-file-pdf"></i> Download PDF
+    </a>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+
+
+<script>
+$(document).on('click', '.preview-btn', function () {
+    let id = $(this).data('id');
+
+    // Load preview
+    $.get('/templates/' + id + '/preview', function (data) {
+        $('#previewContent').html(data);
+    });
+
+    // Set PDF download URL
+    $('#downloadPdfBtn').attr('href', '/templates/' + id + '/download-pdf');
+
+    $('#previewModal').modal('show');
+});
+
+</script>
+
+
+
+
+dsahboard/company/template_pdf.blade.php
+
+
+@php
+    use Illuminate\Support\Str;
+    $grouped = $template->questions->groupBy('data_category');
+@endphp
+
+<h3 style="font-size: 18px;">Template ID: {{ $template->template_id }}</h3>
+<hr>
+
+@foreach($grouped as $category => $questions)
+    <h5 style="margin-top: 15px; font-size: 14px;">
+        {{ Str::title(str_replace('_', ' ', $category)) }}
+    </h5>
+    <ul>
+        @foreach($questions as $question)
+            <li style="margin-bottom: 5px;">{{ $question->question }}</li>
+        @endforeach
+    </ul>
+@endforeach
+
+@if($grouped->isEmpty())
+    <p style="color: #888;">No questions found</p>
+@endif
+
+
+
+
+
+    Route::get('/templates/{id}/download-pdf', [CompanyController::class, 'downloadPdf'])
+            ->name('templates.download_pdf');
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
+    public function downloadPdf($id)
+{
+    $template = Template::with('questions')->findOrFail($id);
+
+    // Load a Blade view for PDF
+    $pdf = Pdf::loadView('dashboard.company.template_pdf', compact('template'));
+
+    // Download with filename
+    return $pdf->download('template-'.$template->template_id.'.pdf');
+}
