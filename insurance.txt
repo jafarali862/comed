@@ -1,0 +1,320 @@
+user/create
+
+
+<div class="mb-3">
+    <label for="phone" class="form-label fw-bold">Phone <span class="text-danger">*</span></label>
+    <div class="d-flex align-items-center gap-2">
+        <!-- Country Code -->
+        <select id="country_code" name="country_code" class="select2 form-select form-select-sm" data-placeholder="Code">
+            <option></option>
+            <option value="+91" selected>+91 (India)</option>
+            <option value="+1">+1 (USA)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+61">+61 (Australia)</option>
+            <option value="+971">+971 (UAE)</option>
+            <option value="+81">+81 (Japan)</option>
+            <option value="+49">+49 (Germany)</option>
+        </select>
+
+        <!-- Phone Number -->
+        <input type="text"  class="form-control" 
+       id="phone" 
+       name="phone" 
+       value="{{ old('phone') }}"
+       placeholder="Enter contact number" 
+       required 
+       maxlength="15"
+       inputmode="numeric"
+       oninput="validatePhoneInput(this)">
+    </div>
+    <div id="phoneError" class="text-danger mt-1" style="display:none;">
+        Please enter digits only (0-9).
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Bootstrap 5 theme for Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<!-- jQuery (only once!) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css')}}" type="text/css">
+
+
+
+<style>
+    .select2-container
+    {
+width:281.547px !important;
+    }
+    </style>
+
+
+
+<script>
+
+
+   $('#country_code').select2({
+        theme: 'bootstrap-5',
+        width: 'resolve',           // fit the select box container
+        placeholder: $('#country_code').data('placeholder'),
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search box
+    });
+
+</script>
+
+
+
+
+
+user/edit
+email/after
+                <div class="mb-3">
+                <label for="phone" class="form-label fw-bold">Phone <span class="text-danger">*</span></label>
+                <div class="d-flex align-items-center gap-2">
+                <!-- Country Code -->
+                <select id="country_code" name="country_code" class="select2 form-select form-select-sm" data-placeholder="Code">
+                <option></option>
+                <option value="+91" selected>+91 (India)</option>
+                <option value="+1">+1 (USA)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+971">+971 (UAE)</option>
+                <option value="+81">+81 (Japan)</option>
+                <option value="+49">+49 (Germany)</option>
+                </select>
+
+                <!-- Phone Number -->
+                <input type="text"   class="form-control" 
+                id="phone" 
+                name="phone" 
+                value="{{ old('phone', $user->phone) }}" 
+                placeholder="Enter contact number" 
+                required 
+                maxlength="15"
+                inputmode="numeric"
+                oninput="validatePhoneInput(this)">
+                </div>
+                <div id="phoneError" class="text-danger mt-1" style="display:none;">
+                Please enter digits only (0-9).
+                </div>
+                </div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Bootstrap 5 theme for Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<!-- jQuery (only once!) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" href="{{ asset('assets/plugins/daterangepicker/daterangepicker.css')}}" type="text/css">
+
+
+
+<style>
+    .select2-container
+    {
+width:281.547px !important;
+    }
+    </style>
+
+
+<script>
+
+   $('#country_code').select2({
+        theme: 'bootstrap-5',
+        width: 'resolve',           // fit the select box container
+        placeholder: $('#country_code').data('placeholder'),
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search box
+    });
+</script>
+
+
+user/index.blade.php
+
+ <form id="statusForm" method="GET" class="d-flex align-items-center gap-3 mb-0">
+    <div class="form-check form-check-inline">
+      
+
+        <input class="form-check-input" 
+       type="radio" 
+       name="status" 
+       id="statusActive" 
+       value="1"
+       {{ request('status') === '1' || request('status') === null ? 'checked' : '' }}
+       onchange="document.getElementById('statusForm').submit();">
+<label class="form-check-label text-white" for="statusActive">Active</label>
+
+    </div>
+
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" 
+               type="radio" 
+               name="status" 
+               id="statusInactive" 
+               value="0"
+               {{ (string) request('status') === '0' ? 'checked' : '' }}
+               onchange="document.getElementById('statusForm').submit();">
+        <label class="form-check-label text-white" for="statusInactive">Inactive</label>
+    </div>
+</form>
+
+
+
+
+
+<div class="modal fade" id="blockUserModal" tabindex="-1" aria-labelledby="blockUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="blockUserForm" method="POST" action="">
+      @csrf
+      @method('POST')
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="blockUserModalLabel">Confirm Block</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p>Are you sure you want to block this user?</p>
+
+          <!-- Block reason textarea -->
+          <div class="mb-3">
+            <label for="block_reason" class="form-label fw-bold">Reason / Description <span class="text-danger">*</span></label>
+            <textarea 
+              name="block_reason" 
+              id="block_reason" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Enter reason for blocking this user" 
+              required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+<Script>
+ $('#statusActive, #statusInactive').on('change', function () {
+            $('#statusForm').submit();
+        });
+        </Script>
+
+
+Userontoller/stroe
+         "country_code" => "required|string",
+           "country_code" => $request->country_code,
+
+Userontoller/update
+               "country_code" => "nullable|string",
+               "country_code" => $request->country_code,
+
+
+                public function block(Request $request, $id)
+{
+    $request->validate([
+        'block_reason' => 'required|string|max:500',
+    ]);
+
+    DB::transaction(function () use ($id, $request) {
+        // 1. Update users table with status, reason & timestamp
+        DB::table('users')->where('id', $id)->update([
+            'status' => 0,
+            'block_reason' => $request->input('block_reason'),
+            'updated_at' => now(),
+        ]);
+
+        // 2. Revoke all access tokens for this user
+        DB::table('oauth_access_tokens')->where('user_id', $id)->update([
+            'revoked' => 1,
+        ]);
+    });
+
+    return redirect()->back()->with('success', 'User has been blocked successfully.');
+}
+
+Usermodel - 'country_code'
+
+block_reason varchar 
+country_code
+
+
+company/create.blade.php
+
+ <div class="mb-3">
+    <label for="phone" class="form-label fw-bold">Phone <span class="text-danger">*</span></label>
+    <div class="d-flex align-items-center gap-2">
+        <!-- Country Code -->
+        <select id="country_code" name="country_code" class="select2 form-select form-select-sm" data-placeholder="Code">
+            <option></option>
+            <option value="+91" selected>+91 (India)</option>
+            <option value="+1">+1 (USA)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+61">+61 (Australia)</option>
+            <option value="+971">+971 (UAE)</option>
+            <option value="+81">+81 (Japan)</option>
+            <option value="+49">+49 (Germany)</option>
+        </select>
+
+        <!-- Phone Number -->
+        <input type="text" id="phone" name="phone" class="form-control" 
+               placeholder="Enter phone number"
+               required maxlength="15" inputmode="numeric"
+               oninput="validatePhoneInput(this)">
+    </div>
+    <div id="phoneError" class="text-danger mt-1" style="display:none;">
+        Please enter digits only (0-9).
+    </div>
+</div>
+
+.select2-container
+{
+width:281.547px !important;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Bootstrap 5 theme for Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+
+<!-- jQuery (only once!) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+<script>
+
+
+   $('#country_code').select2({
+        theme: 'bootstrap-5',
+        width: 'resolve',           // fit the select box container
+        placeholder: $('#country_code').data('placeholder'),
+        allowClear: true,
+        minimumResultsForSearch: 0 // always show search box
+    });
+</script>
+
+
