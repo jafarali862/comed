@@ -1,0 +1,78 @@
+
+          
+Report Gernatecontroler/saveSelected
+
+DB::table('insurance_cases')
+    ->join('case_assignments', 'insurance_cases.id', '=', 'case_assignments.case_id')
+    ->where('case_assignments.id', $caseId)
+    ->update(['insurance_cases.case_status' => 0]);
+
+
+
+case contrroler/storequestion
+
+DB::table('insurance_cases')
+    ->join('case_assignments', 'insurance_cases.id', '=', 'case_assignments.case_id')
+    ->where('case_assignments.id', $submission->case_id)
+    ->update(['insurance_cases.case_status' => 1]);
+
+
+
+user/create.blade.php/edit
+
+
+@php
+use Illuminate\Support\Facades\Http;
+
+// Fetch countries dynamically
+$countries = Http::get('https://restcountries.com/v3.1/all?fields=name,idd,cca2')->json();
+@endphp
+
+
+      <select id="country_code" name="country_code" class="select2 form-select form-select-sm" data-placeholder="Code">
+    <option value="">Select Country Code</option>
+    @foreach($countries as $country)
+        @php
+            $dialCode = isset($country['idd']['root'], $country['idd']['suffixes'][0]) 
+                ? $country['idd']['root'] . $country['idd']['suffixes'][0] 
+                : null;
+        @endphp
+
+        @if($dialCode)
+            <option value="{{ $dialCode }}"
+                {{ $dialCode == '+91' ? 'selected' : '' }}>
+                {{ $dialCode }} ({{ $country['name']['common'] }})
+            </option>
+        @endif
+    @endforeach
+</select>
+
+
+user/edit
+    <option>-- Select Blood Group --</option>
+
+usercontroller
+     public function update(Request $request)
+
+
+ $request->validate([
+    "id" => "required|exists:users,id", // Ensure the user exists
+    "name" => "required|string|max:255",
+    "phone" => "required|string|max:20",
+    'email' => 'required|email',
+    "password" => "nullable|string|min:6",
+    "role" => "required|string",
+    "status2" => "required",
+    "blood" => "required|string|max:10",
+    "address" => "required|string|max:1000",    
+    "date_of_birth" => "required|string",
+    "join_date" => "required|string",
+    "country_code" => "nullable|string",
+    "profile_picture" => "nullable|image|mimes:jpeg,png,jpg",
+   
+
+], [
+
+    'blood.max' => 'The blood group is required',
+
+]);
