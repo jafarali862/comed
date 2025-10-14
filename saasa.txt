@@ -1,0 +1,25 @@
+.title-1 {
+    font-size: 28px;
+    text-align: center;
+    margin: 40px 0 20px;
+    font-weight: bold;
+    position: relative;
+    margin-right: 880px;
+
+
+
+.title-1::after {
+    content: "";
+    background-color: #FFCA2C;
+    height: 4px;
+    width: 46%;
+
+
+.close{
+    position: sticky;
+    top: 0;
+    text-align: center;
+    margin: 0px 0 0 auto;
+}
+
+welcome myPx pb-0 pt-0
