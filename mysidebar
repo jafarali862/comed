@@ -1,0 +1,6 @@
+<li class="side-nav-item {{ request()->routeIs('odometer.list') || request()->routeIs('odometer.view') ? 'active' : '' }}">
+    <a href="{{ route('odometer.list') }}" class="side-nav-link">
+        <span class="menu-icon"><i class="ti ti-folder"></i></span>
+        <span class="menu-text" data-lang="file-manager">Odometer Reading</span>
+    </a>
+</li>
