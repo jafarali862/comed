@@ -1,0 +1,187 @@
+public function view(string $id)
+    { 
+       $insuranceCustomer = InsuranceCustomer::all();
+    $companies = InsuranceCompany::where('status', '!=', 0)->get();
+    $users = User::whereNotIn('role', [1, 2])
+                 ->where('status', '!=', 0)
+                 ->get();
+
+    // Fetch single customer with related data
+    $customer = InsuranceCustomer::with([
+            'company:id,name',
+            'insuranceCase:id,customer_id,case_status,assigned_status,case_details,insurance_type',
+            'caseAssignments:id,customer_id,type,date,other,executive_driver,executive_garage,executive_spot,executive_meeting,executive_accident_person,created_at',
+            'caseAssignments.driver:id,name',
+            'caseAssignments.garage:id,name',
+            'caseAssignments.spot:id,name',
+            'caseAssignments.meeting:id,name',
+            'caseAssignments.accidentPerson:id,name',
+        ])
+        ->findOrFail($id);
+
+    // Flatten data to look like old query
+    $customers = (object)[
+        'id' => $customer->id,
+        'name' => $customer->name,
+        'phone' => $customer->phone,
+        'crime_number' => $customer->crime_number,
+        'police_station' => $customer->police_station,
+        'case_status' => $customer->insuranceCase->case_status ?? null,
+        'assigned_status' => $customer->insuranceCase->assigned_status ?? null,
+        'case_details' => $customer->insuranceCase->case_details ?? null,
+        'ins_type' => $customer->insuranceCase->insurance_type ?? null,
+        'custname' => $customer->company->name ?? null,
+        'case_type' => $customer->caseAssignments->type ?? null,
+        'case_date' => $customer->caseAssignments->date ?? null,
+        'case_other' => $customer->caseAssignments->other ?? null,
+        'driver_id' => $customer->caseAssignments->driver->id ?? null,
+        'garage_id' => $customer->caseAssignments->garage->id ?? null,
+        'spot_id' => $customer->caseAssignments->spot->id ?? null,
+        'meeting_id' => $customer->caseAssignments->meeting->id ?? null,
+        'accident_id' => $customer->caseAssignments->accidentPerson->id ?? null,
+        'driver_name' => $customer->caseAssignments->driver->name ?? null,
+        'garage_name' => $customer->caseAssignments->garage->name ?? null,
+        'spot_name' => $customer->caseAssignments->spot->name ?? null,
+        'meeting_name' => $customer->caseAssignments->meeting->name ?? null,
+        'accident_name' => $customer->caseAssignments->accidentPerson->name ?? null,
+        'created_at' => $customer->caseAssignments->created_at ?? $customer->created_at,
+    ];
+
+    return view('dashboard.case.view', compact('customers', 'companies', 'id', 'users', 'insuranceCustomer'));  
+    }
+
+
+
+
+
+
+
+
+
+InsuranceCustomer
+  public function insuranceCase()
+{
+    return $this->hasOne(InsuranceCase::class, 'customer_id');
+}
+
+public function caseAssignments()
+{
+    return $this->hasOne(CaseAssignment::class, 'customer_id');
+}
+
+public function company()
+{
+    return $this->belongsTo(InsuranceCompany::class, 'company_id');
+}
+
+
+
+
+
+
+CaseAssignment.php
+
+ // public function company()
+    // {
+    // return $this->belongsTo(InsuranceCompany::class, 'company_id');
+    // }
+
+    // public function customer()
+    // {
+    // return $this->belongsTo(InsuranceCustomer::class, 'customer_id');
+    // }
+
+    public function driver()
+    {
+    return $this->belongsTo(User::class, 'executive_driver');
+    }
+
+    public function garage()
+    {
+    return $this->belongsTo(User::class, 'executive_garage');
+    }
+
+    public function spot()
+    {
+    return $this->belongsTo(User::class, 'executive_spot');
+    }
+
+    public function accidentPerson()
+    {
+    return $this->belongsTo(User::class, 'executive_accident_person');
+    }
+
+    public function meeting()
+    {
+    return $this->belongsTo(User::class, 'executive_meeting');
+    }
+
+
+
+
+
+
+
+
+case/view.blade.php
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+            <h5>Customer Name:</h5>
+            <p>{{ $customers->name ?? 'N/A' }} ({{ $customers->phone ?? 'N/A' }})</p>
+
+            <h5>Company:</h5>
+            <p>{{ $customers->custname ?? 'N/A' }}</p>
+
+            <h5>Crime Number:</h5>
+            <p>{{ $customers->crime_number ?? 'N/A' }}</p>
+
+            <h5>Police Station:</h5>
+            <p>{{ $customers->police_station ?? 'N/A' }}</p>
+
+            <h5>Executive Name:</h5>
+            <p><b>Driver:</b> {{ $customers->driver_name ?? 'N/A' }}</p>
+            <p><b>Garage:</b> {{ $customers->garage_name ?? 'N/A' }}</p>
+            <p><b>Spot:</b> {{ $customers->spot_name ?? 'N/A' }}</p>
+            <p><b>Meeting:</b> {{ $customers->meeting_name ?? 'N/A' }}</p>
+            <p><b>Accident:</b> {{ $customers->accident_name ?? 'N/A' }}</p>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+            <h5>Assign Date:</h5>
+            <p>
+                {{ $customers->created_at ? \Carbon\Carbon::parse($customers->created_at)->format('d-m-Y') : 'N/A' }}
+            </p>
+
+            <h5>Status:</h5>
+            <p>
+                @if ($customers->case_status == 1)
+                    <span class="badge bg-danger">Pending</span>
+                @elseif ($customers->case_status == 0)
+                    <span class="badge bg-success">Complete</span>
+                @elseif ($customers->case_status == 2)
+                    <span class="badge bg-warning text-dark">Assigned</span>
+                @else
+                    <span class="badge bg-secondary">Unknown</span>
+                @endif
+            </p>
+
+            <h5>Investigation Date:</h5>
+            <p>
+                {{ $customers->case_date ? \Carbon\Carbon::parse($customers->case_date)->format('d-m-Y') : 'N/A' }}
+            </p>
+
+            <h5>Case Type:</h5>
+            <p>{{ $customers->insurance_type ?? 'N/A' }}</p>
+
+            <h5>Created Date:</h5>
+            <p>
+                {{ $customers->created_at ? \Carbon\Carbon::parse($customers->created_at)->format('d-m-Y') : 'N/A' }}
+            </p>
+        </div>
+    </div>
+</div>
+
+
